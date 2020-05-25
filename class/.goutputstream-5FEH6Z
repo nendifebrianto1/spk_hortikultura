@@ -1,0 +1,333 @@
+<?php
+error_reporting(0);
+
+class PerhitunganSAW {
+	
+ public function hasilperhitungansaw() { 
+	 include_once("class/class.koneksi.php");
+		session_start();
+		$kon = new koneksi;
+		$kon -> doKoneksi2();
+	 ?>
+	<div id="main_content">
+		<a href="?page=tambah_nilaikriteria" class="button">TAMBAH DATA</a>
+		<a href="?page=cari_nilaikriteria" class="button">CARI DATA NILAI KRITERIA</a>
+		
+		<h3>Tabel Nilai Kriteria Modal Awal</h3>
+		<table width="100%" id="data" border="1" cellpadding="8">
+			<thead>
+				<tr>
+					<th>No</th>
+					<th>Kode Tanaman</th>
+					<th>Kode Kriteria</th>
+					<th>Nilai Kriteria (Rp)</th>
+					<th>Tools</th>
+			</thead>
+			<tbody>
+			<?php
+				$i=1;
+				if(!ISSET($_POST['submit'])){
+				$query=mysql_query("select id_tanaman, id_kriteria, nilai_kriteria from nilaikriteria where id_kriteria='K01'");
+				$jmquery=mysql_num_rows($query);
+				for($a=0; $a<$jmquery; $a++){
+				$row=mysql_fetch_array($query);
+			?>
+				<tr>
+					<td align="center" width="1%"><?php echo $i; ?></td>
+					<td><?php echo $row['id_tanaman']; ?></td>
+					<td><?php echo $row['id_kriteria']; ?></td>
+					<td><?php echo number_format($row['nilai_kriteria']); ?></td>
+					<td>
+						<a href="?page=edit_nilaikriteria&id_tanaman=<?php echo $row['id_tanaman'];?> &id_kriteria=<?php echo $row['id_kriteria']; ?>"><img src="images/pencil.png" alt=""></a>
+						<a href="?page=hapus_nilaikriteria&id_tanaman=<?php echo $row['id_tanaman']; ?> &id_kriteria=<?php echo $row['id_kriteria']; ?>" onclick="return confirm('Yakin ingin menghapus data ?')"><img src="images/cross.png" alt=""></a>
+					</td>
+				</tr>
+			<?php $i++; } } ?>
+			</tbody>
+		</table>
+		
+		<br>
+		
+			<h3>Tabel Nilai Kriteria Biaya Operasional</h3>
+		<table width="100%" id="data" border="1" cellpadding="8">
+			<thead>
+				<tr>
+					<th>No</th>
+					<th>Kode Tanaman</th>
+					<th>Kode Kriteria</th>
+					<th>Nilai Kriteria (Rp)</th>
+					<th>Tools</th>
+			</thead>
+			<tbody>
+			<?php
+				$i=1;
+				if(!ISSET($_POST['submit'])){
+				$query=mysql_query("select id_tanaman, id_kriteria, nilai_kriteria from nilaikriteria where id_kriteria='K02'");
+				$jmquery=mysql_num_rows($query);
+				for($a=0; $a<$jmquery; $a++){
+				$row=mysql_fetch_array($query);
+			?>
+				<tr>
+					<td align="center" width="1%"><?php echo $i; ?></td>
+					<td><?php echo $row['id_tanaman']; ?></td>
+					<td><?php echo $row['id_kriteria']; ?></td>
+					<td><?php echo number_format($row['nilai_kriteria']); ?></td>
+					<td>
+						<a href="?page=edit_nilaikriteria&id_tanaman=<?php echo $row['id_tanaman'];?> &id_kriteria=<?php echo $row['id_kriteria']; ?>"><img src="images/pencil.png" alt=""></a>
+						<a href="?page=hapus_nilaikriteria&id_tanaman=<?php echo $row['id_tanaman']; ?> &id_kriteria=<?php echo $row['id_kriteria']; ?>" onclick="return confirm('Yakin ingin menghapus data ?')"><img src="images/cross.png" alt=""></a>
+					</td>
+				</tr>
+			<?php $i++; } } ?>
+			</tbody>
+		</table>
+		
+		<br>
+		
+		<h3>Tabel Nilai Kriteria Lama Panen</h3>
+		<table width="100%" id="data" border="1" cellpadding="8">
+			<thead>
+				<tr>
+					<th>No</th>
+					<th>Kode Tanaman</th>
+					<th>Kode Kriteria</th>
+					<th>Nilai Kriteria (Hari)</th>
+					<th>Tools</th>
+			</thead>
+			<tbody>
+			<?php
+				$i=1;
+				if(!ISSET($_POST['submit'])){
+				$query=mysql_query("select id_tanaman, id_kriteria, nilai_kriteria from nilaikriteria where id_kriteria='K03'");
+				$jmquery=mysql_num_rows($query);
+				for($a=0; $a<$jmquery; $a++){
+				$row=mysql_fetch_array($query);
+			?>
+				<tr>
+					<td align="center" width="1%"><?php echo $i; ?></td>
+					<td><?php echo $row['id_tanaman']; ?></td>
+					<td><?php echo $row['id_kriteria']; ?></td>
+					<td><?php echo number_format($row['nilai_kriteria']); ?></td>
+					<td>
+						<a href="?page=edit_nilaikriteria&id_tanaman=<?php echo $row['id_tanaman'];?> &id_kriteria=<?php echo $row['id_kriteria']; ?>"><img src="images/pencil.png" alt=""></a>
+						<a href="?page=hapus_nilaikriteria&id_tanaman=<?php echo $row['id_tanaman']; ?> &id_kriteria=<?php echo $row['id_kriteria']; ?>" onclick="return confirm('Yakin ingin menghapus data ?')"><img src="images/cross.png" alt=""></a>
+					</td>
+				</tr>
+			<?php $i++; } } ?>
+			</tbody>
+		</table>
+		
+		<br>
+		
+		<h3>Tabel Nilai Kriteria Harga Jual</h3>
+		<table width="100%" id="data" border="1" cellpadding="8">
+			<thead>
+				<tr>
+					<th>No</th>
+					<th>Kode Tanaman</th>
+					<th>Kode Kriteria</th>
+					<th>Nilai Kriteria (Rp)</th>
+					<th>Tools</th>
+			</thead>
+			<tbody>
+			<?php
+				$i=1;
+				if(!ISSET($_POST['submit'])){
+				$query=mysql_query("select id_tanaman, id_kriteria, nilai_kriteria from nilaikriteria where id_kriteria='K04'");
+				$jmquery=mysql_num_rows($query);
+				for($a=0; $a<$jmquery; $a++){
+				$row=mysql_fetch_array($query);
+			?>
+				<tr>
+					<td align="center" width="1%"><?php echo $i; ?></td>
+					<td><?php echo $row['id_tanaman']; ?></td>
+					<td><?php echo $row['id_kriteria']; ?></td>
+					<td><?php echo number_format($row['nilai_kriteria']); ?></td>
+					<td>
+						<a href="?page=edit_nilaikriteria&id_tanaman=<?php echo $row['id_tanaman'];?> &id_kriteria=<?php echo $row['id_kriteria']; ?>"><img src="images/pencil.png" alt=""></a>
+						<a href="?page=hapus_nilaikriteria&id_tanaman=<?php echo $row['id_tanaman']; ?> &id_kriteria=<?php echo $row['id_kriteria']; ?>" onclick="return confirm('Yakin ingin menghapus data ?')"><img src="images/cross.png" alt=""></a>
+					</td>
+				</tr>
+			<?php $i++; } } ?>
+			</tbody>
+		</table>
+	
+		<br>
+		
+		<h3>Tabel Nilai Kriteria Keuntungan</h3>
+		<table width="100%" id="data" border="1" cellpadding="8">
+			<thead>
+				<tr>
+					<th>No</th>
+					<th>Kode Tanaman</th>
+					<th>Kode Kriteria</th>
+					<th>Nilai Kriteria (Rp)</th>
+					<th>Tools</th>
+			</thead>
+			<tbody>
+			<?php
+				$i=1;
+				if(!ISSET($_POST['submit'])){
+				$query=mysql_query("select id_tanaman, id_kriteria, nilai_kriteria from nilaikriteria where id_kriteria='K05'");
+				$jmquery=mysql_num_rows($query);
+				for($a=0; $a<$jmquery; $a++){
+				$row=mysql_fetch_array($query);
+			?>
+				<tr>
+					<td align="center" width="1%"><?php echo $i; ?></td>
+					<td><?php echo $row['id_tanaman']; ?></td>
+					<td><?php echo $row['id_kriteria']; ?></td>
+					<td><?php echo number_format($row['nilai_kriteria']); ?></td>
+					<td>
+						<a href="?page=edit_nilaikriteria&id_tanaman=<?php echo $row['id_tanaman'];?> &id_kriteria=<?php echo $row['id_kriteria']; ?>"><img src="images/pencil.png" alt=""></a>
+						<a href="?page=hapus_nilaikriteria&id_tanaman=<?php echo $row['id_tanaman']; ?> &id_kriteria=<?php echo $row['id_kriteria']; ?>" onclick="return confirm('Yakin ingin menghapus data ?')"><img src="images/cross.png" alt=""></a>
+					</td>
+				</tr>
+			<?php $i++; } } ?>
+			</tbody>
+		</table>
+</div>
+
+<?//--?>
+
+<div id="main_content">
+<h4>Rating Kecocokan Setiap Alternatif</h4>
+	    	<table width="100%" border="1" cellpadding="8">
+			<thead>
+					<tr>
+		                <th rowspan="2"><b>Nama Tanaman</b></th>
+		                <th colspan="<?php echo $query1; ?>"><b>Nama Kriteria</b></th>
+					</tr>
+					<tr>
+		            <?php
+					$query1=mysql_query("SELECT * FROM kriteria ORDER BY id_kriteria ASC");
+					$jmquery1=mysql_num_rows($query1);
+					for($a1=0; $a1<$jmquery1; $a1++){
+					$row2x=mysql_fetch_array($query1);
+					?>
+		                <th><b><?php echo $row2x['nama_kriteria'] ?><br/>(<?php echo $row2x['tipe_kriteria'] ?>)</b></th>
+		            <?php
+					}
+					?>
+		            </tr>
+		        </thead>
+		        <tbody>
+		        <?php
+				$query2=mysql_query("SELECT * FROM tanaman ORDER BY id_tanaman ASC");
+				$jmquery2=mysql_num_rows($query2);
+				for($a2=0; $a2<$jmquery2; $a2++){
+				$row1x=mysql_fetch_array($query2);
+					?>
+		            <tr>
+		                <th><?php echo $row1x['nama_tanaman'] ?></th>
+		                <?php
+		                $ax= $row1x['id_tanaman'];
+						$query3=mysql_query("SELECT * FROM tanaman a, kriteria b, nilaikriteria c where a.id_tanaman=c.id_tanaman and b.id_kriteria=c.id_kriteria and c.id_tanaman='$ax'");
+						$jmquery3=mysql_num_rows($query3);
+						for($a3=0; $a3<$jmquery3; $a3++){
+						$rowrx=mysql_fetch_array($query3);
+						?>
+		                <td>
+		                	<?php 
+		                	echo number_format($rowrx['nilai_kriteria']);
+		                	?>
+		                </td>
+		                <?php
+		                }
+						?>
+		            </tr>
+				<?php
+				}
+				?>
+		    </table>
+		
+			<br/>
+	    	<h4>Normalisasi R Perangkingan</h4>
+	    	<table width="100%" border="1" cellpadding="8">
+			<thead>
+					<tr>
+		                <th rowspan="2"><b>Nama Tanaman</b></th>
+		                <th colspan="<?php echo $query4; ?>" ><b>Nama Kriteria</b></th>
+					</tr>
+					<tr>
+		            <?php
+		            $query4=mysql_query("SELECT * FROM kriteria ORDER BY id_kriteria ASC");
+					$jmquery4=mysql_num_rows($query4);
+					for($a4=0; $a4<$jmquery4; $a4++){
+					$row2=mysql_fetch_array($query4);
+					?>
+		                <th><b><?php echo $row2['nama_kriteria'] ?></b></th>
+		            <?php
+					}
+					?>
+		            </tr>
+		        </thead>
+		        <tbody>
+				<?php
+				$query5=mysql_query("SELECT * FROM tanaman ORDER BY id_tanaman ASC");
+				$jmquery5=mysql_num_rows($query5);
+				for($a5=0; $a5<$jmquery5; $a5++){
+				$row1=mysql_fetch_array($query5);
+				?>
+		            <tr>
+		                <th><?php echo $row1['nama_tanaman'] ?></th>
+		                <?php
+		                $a= $row1['id_tanaman'];
+		                $query6=mysql_query("SELECT * FROM tanaman a, kriteria b, nilaikriteria c where a.id_tanaman=c.id_tanaman and b.id_kriteria=c.id_kriteria and c.id_tanaman='$a'");
+						$jmquery6=mysql_num_rows($query6);
+						for($a6=0; $a6<$jmquery6; $a6++){
+						$rowr=mysql_fetch_array($query6);
+							$b = $rowr['id_kriteria'];
+							$tipe_kriteria = $rowr['tipe_kriteria'];
+							$bobot_kriteria = $rowr['bobot_kriteria'];
+						?>
+		                <td>
+		                	<?php 
+		                	if($tipe_kriteria=='benefit'){
+		                		$stmtmax = ("SELECT max(nilai_kriteria) as max FROM nilaikriteria WHERE id_kriteria='$b' LIMIT 0,1");
+								$maxnr=mysql_num_rows($stmtmax);
+								for($aa=0; $aa<$jmquery66; $aa++){
+								$rowr=mysql_fetch_array($maxnr);
+								echo round($nor =$rowr['nilai_kriteria']/$maxnr['max'],3);
+							} else{
+								$stmtmin = ("SELECT max(nilai_kriteria) as min FROM nilaikriteria WHERE id_kriteria='$b' LIMIT 0,1");
+								$minnr=mysql_num_rows($stmtmin);
+								for($aaa=0; $aaa<$jmquery666; $aaa++){
+								$rowr=mysql_fetch_array($minnr);
+								echo round($nor = $minnr['min']/$rowr['nilai_kriteria'],3);
+							}
+							}
+						}
+							
+							//$pro->id_tanaman = $a;
+							//$pro->id_kriteria = $b;
+							//$pro->nilai_normalisasi = $nor;
+							//$pro->bobot_normalisasi = $bobot_kriteria*$nor;
+							//$pro->normalisasi();
+		                	?>
+		                </td>
+		                
+		                <?php
+		                }
+						}
+						?>
+						
+					<tr>
+		                <th><b>Bobot Kriteria</b></th>
+						<?php
+						$query7=mysql_query("SELECT * FROM kriteria ORDER BY id_kriteria ASC");
+						$jmquery7=mysql_num_rows($query7);
+						for($a7=0; $a7<$jmquery7; $a7++){
+						$row2yx=mysql_fetch_array($query7);
+							?>
+		                <td><b><?php echo $row2yx['bobot_kriteria'] ?></b></td>
+		            <?php
+					} }
+					?>
+					</tr>
+		        </tbody>
+		    </table>
+		    
+		    
+</div>
+	
+<?php } }?>

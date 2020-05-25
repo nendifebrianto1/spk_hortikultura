@@ -1,0 +1,680 @@
+<?php
+class perhitungan {
+public function hasilperhitungan() {
+$konf = new koneksi;
+$kon = $konf->doKoneksi();
+?>
+<P
+<html>
+<head>
+  <title>SPK Hortikultura</title>
+  <style>
+
+  </style>
+</head>
+<body>
+	<a href="?page=hasil_rangking">LIHAT HASIL RANGKING</a>
+  <h1>Perhitungan Metode Simple Additive Weighting (SAW)</h1>
+    <b>
+    [1] Menentukan kriteria - kriteria yang akan dijadikan acuan dalam pengambilan
+    keputusan. <br> <br> Adapun kriteria yang digunakan untuk menentuan peluang usaha
+    pertanian hortikultura ada 5 yaitu:
+  </b>
+  <p>
+    <table class=center border=1px>
+      <tr bgcolor=#90EE90>
+        <td>No</td>
+        <td>Simbol</td>
+        <td>Kriteria</td>
+        <td>Bobot</td>
+        <td>Atribut</td>
+      </tr>
+
+      <?php
+      // <table style="visibility:hidden;">
+      $sql='SELECT nama_kriteria,bobot,atribut FROM kriteria';
+      $result=$kon->query($sql);
+      $i=0;
+      while($row=$result->fetch_object()){
+        echo "<tr>
+           <td class='center'>".(++$i)."</td>
+           <td class='center'>K0{$i}</td>
+           <td>{$row->nama_kriteria}</td>
+           <td>{$row->bobot}</td>
+           <td>{$row->atribut}</td>
+         </tr>\n";
+      }
+      $result->free();
+      ?>
+    </table>
+  </p>
+  
+  <b>Adapun kriteria yang digunakan untuk menentuan peluang usaha pertanian hortikultura ada 5 yaitu:</b>
+  <p>
+    <table border=1px>
+      <tr class=center bgcolor=#90EE90>
+        <td>No</td>
+        <td>Simbol</td>
+        <td>Tanaman</td>
+      </tr>
+
+      <?php
+      // <table style="visibility:hidden;">
+      $sql='SELECT nama_tanaman FROM nama_tanaman';
+      $result=$kon->query($sql);
+      $i=0;
+      while($row=$result->fetch_object()){
+        echo "<tr>
+           <td class='center'>".(++$i)."</td>
+           <td class='center'>A{$i}</td>
+           <td>{$row->nama_tanaman}</td>
+         </tr>\n";
+      }
+      $result->free();
+      ?>
+    </table>
+  </p>
+  
+  
+  <b>[2] Menentukan rating kecocokan setiap alternatif pada setiap kriteria.</b>
+  <p>
+    <table border=1px>
+      <caption>
+        Rating Kecocokan Alternatif utk setiap Kriteria
+      </caption>
+      <tr class=center bgcolor=#90EE90>
+        <td rowspan='2'>Alternatif</td>
+        <td colspan='5'>Kriteria</td>
+      </tr>
+      <tr class=center bgcolor=#90EE90>
+        <td>K01</td>
+        <td>K02</td>
+        <td>K03</td>
+        <td>K04</td>
+        <td>K05</td>
+      </tr>
+      <?php
+     
+          $sql="SELECT
+             id_namatanaman, nama_tanaman,
+             SUM(IF(id_kriteria='K01',nilai_kriteria,0)) AS C1,
+             SUM(IF(id_kriteria='K02',nilai_kriteria,0)) AS C2,
+             SUM(IF(id_kriteria='K03',nilai_kriteria,0)) AS C3,
+             SUM(IF(id_kriteria='K04',nilai_kriteria,0)) AS C4,
+             SUM(IF(id_kriteria='K05',nilai_kriteria,0)) AS C5
+            FROM
+             nilai_kriteria
+             JOIN nama_tanaman USING(id_namatanaman)
+           GROUP BY id_namatanaman
+           ORDER BY id_namatanaman
+          ";
+        
+      $result=$kon->query($sql);
+      while($row=$result->fetch_object()){
+        echo "<tr>
+               <td>{$row->nama_tanaman}</td>
+               <td>".round($row->C1,1)."</td>
+               <td>".round($row->C2,1)."</td>
+               <td>".round($row->C3,1)."</td>
+               <td>".round($row->C4,1)."</td>
+               <td>".round($row->C5,1)."</td>
+             </tr>\n";
+      }
+      $result->free();
+      ?>
+    </table>
+  </p>
+  
+  <b>[3] Membuat matriks keputusan berdasarkan kriteria<b>
+  <p>
+    <table border=1px>
+      <caption>
+        Matriks Keputusan Berdasarkan Kriteria
+      </caption>
+      <tr class=center bgcolor=#90EE90>
+        <td rowspan='2'>Alternatif</td>
+        <td colspan='5'>Kriteria</td>
+      </tr>
+      <tr class=center bgcolor=#90EE90>
+        <td>K01</td>
+        <td>K02</td>
+        <td>K03</td>
+        <td>K04</td>
+        <td>K05</td>
+      </tr>
+      <?php
+      $sql="SELECT
+             a.id_namatanaman,
+             SUM(IF(a.id_kriteria='K01',a.nilai_kriteria,0)) AS C1,
+             SUM(IF(a.id_kriteria='K02',a.nilai_kriteria,0)) AS C2,
+             SUM(IF(a.id_kriteria='K03',a.nilai_kriteria,0)) AS C3,
+             SUM(IF(a.id_kriteria='K04',a.nilai_kriteria,0)) AS C4,
+             SUM(IF(a.id_kriteria='K05',a.nilai_kriteria,0)) AS C5
+           FROM
+             nilai_kriteria a
+             JOIN kriteria b USING(id_kriteria)
+           GROUP BY a.id_namatanaman
+           ORDER BY a.id_namatanaman
+          ";
+      $result=$kon->query($sql);
+      $X=array(1=>array(),2=>array(),3=>array(),4=>array(),5=>array());
+      while($row=$result->fetch_object()){
+        array_push($X[1],round($row->C1,3));
+        array_push($X[2],round($row->C2,3));
+        array_push($X[3],round($row->C3,3));
+        array_push($X[4],round($row->C4,3));
+        array_push($X[5],round($row->C5,3));
+        echo "<tr class='center'>
+               <td>{$row->id_namatanaman}</td>
+               <td>".round($row->C1,3)."</td>
+               <td>".round($row->C2,3)."</td>
+               <td>".round($row->C3,3)."</td>
+               <td>".round($row->C4,3)."</td>
+               <td>".round($row->C5,3)."</td>
+             </tr>\n";
+      }
+      $result->free();
+      ?>
+    </table>
+  </p>
+  
+  
+   <p>
+   <b>[4] Melakukan perhitungan normalisasi dengan rumus sebagai berikut:</b>
+  <p>
+    R<sub>ij</sub> = X<sub>ij</sub> / Max X<sub>ij</sub> (Jika J adalah atribut benefit)
+  </p>
+  <p>
+    R<sub>ij</sub> = Min X<sub>ij</sub> / X<sub>ij</sub> (Jika J adalah atribut cost)
+  </p>
+  <p>
+   Maka nilai-nilai ternormalisasi-nya menjadi:
+  </p>
+  <p>
+    <table border=1px>
+      <caption>
+          Matrik Ternormalisasi
+      </caption>
+      <tr class=center bgcolor=#90EE90>
+        <td rowspan='2'>Alternatif</td>
+        <td colspan='5'>Kriteria</td>
+      </tr>
+       <tr class=center bgcolor=#90EE90>
+		<td>K01</td>
+        <td>K02</td>
+        <td>K03</td>
+        <td>K04</td>
+        <td>K05</td>
+      </tr>
+      <?php
+      $sql="SELECT
+             a.id_namatanaman,
+             SUM(
+               IF(
+                 a.id_kriteria='K01',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[1]).",
+                   ".min($X[1])."/a.nilai_kriteria)
+                 ,0)
+                 ) AS C1,
+             SUM(
+               IF(
+                 a.id_kriteria='K02',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[2]).",
+                   ".min($X[2])."/a.nilai_kriteria)
+                  ,0)
+                ) AS C2,
+             SUM(
+               IF(
+                 a.id_kriteria='K03',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[3]).",
+                   ".min($X[3])."/a.nilai_kriteria)
+                  ,0)
+                ) AS C3,
+             SUM(
+               IF(
+                 a.id_kriteria='K04',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[4]).",
+                   ".min($X[4])."/a.nilai_kriteria)
+                  ,0)
+                ) AS C4,
+             SUM(
+               IF(
+                 a.id_kriteria='K05',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[5]).",
+                   ".min($X[5])."/a.nilai_kriteria)
+                  ,0)
+                ) AS C5
+           FROM
+             nilai_kriteria a
+             JOIN kriteria b USING(id_kriteria)
+           GROUP BY a.id_namatanaman
+           ORDER BY a.id_namatanaman
+          ";
+      $result=$kon->query($sql);
+      $R=array();
+      while($row=$result->fetch_object()){
+        $R[$row->id_namatanaman]=array($row->C1,$row->C2,$row->C3,$row->C4,$row->C5);
+        echo "<tr class='center'>
+               <td>{$row->id_namatanaman}</td>
+               <td>".round($row->C1,3)."</td>
+               <td>".round($row->C2,3)."</td>
+               <td>".round($row->C3,3)."</td>
+               <td>".round($row->C4,3)."</td>
+               <td>".round($row->C5,3)."</td>
+             </tr>\n";
+      }
+      ?>
+    </table>
+  </p>
+  
+  <p>
+    <table border=1px>
+      <caption>
+          Hasil Perangkingan Perhitungan SAW
+      </caption>
+       <tr class=center bgcolor=#90EE90>
+        <td rowspan='2'>Alternatif</td>
+        <td colspan='5'>Kriteria</td>
+      </tr>
+       <tr class=center bgcolor=#90EE90>
+        <td>K01</td>
+        <td>K02</td>
+        <td>K03</td>
+        <td>K04</td>
+        <td>K05</td>
+      </tr>
+      <?php
+      $sql1="SELECT
+             a.id_namatanaman,
+             SUM(
+               IF(
+                 a.id_kriteria='K01',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[1]).",
+                   ".min($X[1])."/a.nilai_kriteria*bobot)
+                 ,0)
+                 ) AS C1,
+             SUM(
+               IF(
+                 a.id_kriteria='K02',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[2]).",
+                   ".min($X[2])."/a.nilai_kriteria*bobot)
+                  ,0)
+                ) AS C2,
+             SUM(
+               IF(
+                 a.id_kriteria='K03',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[3]).",
+                   ".min($X[3])."/a.nilai_kriteria*bobot)
+                  ,0)
+                ) AS C3,
+             SUM(
+               IF(
+                 a.id_kriteria='K04',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria*bobot/".max($X[4]).",
+                   ".min($X[4])."/a.nilai_kriteria)
+                  ,0)
+                ) AS C4,
+             SUM(
+               IF(
+                 a.id_kriteria='K05',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria*bobot/".max($X[5]).",
+                   ".min($X[5])."/a.nilai_kriteria)
+                  ,0)
+                ) AS C5
+           FROM
+             nilai_kriteria a
+             JOIN kriteria b USING(id_kriteria) 
+           GROUP BY a.id_namatanaman
+           ORDER BY a.id_namatanaman
+          ";
+      $result=$kon->query($sql1);
+      $R1=array();
+      while($row=$result->fetch_object()){
+        $R1[$row->id_namatanaman]=array($row->C1,$row->C2,$row->C3,$row->C4,$row->C5);
+        echo "<tr class='center'>
+               <td>{$row->id_namatanaman}</td>
+               <td>".round($row->C1,4)."</td>
+               <td>".round($row->C2,4)."</td>
+               <td>".round($row->C3,4)."</td>
+               <td>".round($row->C4,4)."</td>
+               <td>".round($row->C5,4)."</td>
+             </tr>\n";
+      }
+      ?>
+    </table>
+  </p>
+  </p>
+  
+   <h1>Perhitungan Metode Promethee</h1>
+   <p>
+    <table style='padding: 0px 10px 0px 10px;' border=1px>
+      <caption>
+         Rating Kecocokan Alternatif utk setiap Kriteria
+      </caption>
+       <tr class=center bgcolor=#90EE90>
+        <td rowspan='2'>Alternatif</td>
+        <td colspan='5'>Kriteria</td>
+      </tr>
+     <tr class=center bgcolor=#90EE90>
+        <td>K01</td>
+        <td>K02</td>
+        <td>K03</td>
+        <td>K04</td>
+        <td>K05</td>
+      </tr>
+      <?php
+      $no=1;
+      $sql2="SELECT
+             a.id_namatanaman,
+             SUM(
+               IF(
+                 a.id_kriteria='K01',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[1]).",
+                   ".min($X[1])."/a.nilai_kriteria*bobot)
+                 ,0)
+                 ) AS C1,
+             SUM(
+               IF(
+                 a.id_kriteria='K02',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[2]).",
+                   ".min($X[2])."/a.nilai_kriteria*bobot)
+                  ,0)
+                ) AS C2,
+             SUM(
+               IF(
+                 a.id_kriteria='K03',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria/".max($X[3]).",
+                   ".min($X[3])."/a.nilai_kriteria*bobot)
+                  ,0)
+                ) AS C3,
+             SUM(
+               IF(
+                 a.id_kriteria='K04',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria*bobot/".max($X[4]).",
+                   ".min($X[4])."/a.nilai_kriteria)
+                  ,0)
+                ) AS C4,
+             SUM(
+               IF(
+                 a.id_kriteria='K05',
+                 IF(
+                   b.atribut='Benefit',
+                   a.nilai_kriteria*bobot/".max($X[5]).",
+                   ".min($X[5])."/a.nilai_kriteria)
+                  ,0)
+                ) AS C5
+           FROM
+             nilai_kriteria a
+             JOIN kriteria b USING(id_kriteria)
+           GROUP BY a.id_namatanaman
+           ORDER BY a.id_namatanaman
+          ";
+          
+      //perhitungan promethee  
+      $result=$kon->query($sql2);	
+      $data=array();
+      while($data1=$result->fetch_object()){
+        array_push($data, array($data1->C1,$data1->C2,$data1->C3,$data1->C4,$data1->C5));
+        echo "<tr class='center'>
+               <td>{$data1->id_namatanaman}</td>
+               <td>".round($data1->C1,4)."</td>
+               <td>".round($data1->C2,4)."</td>
+               <td>".round($data1->C3,4)."</td>
+               <td>".round($data1->C4,4)."</td>
+               <td>".round($data1->C5,4)."</td>
+             </tr>\n";  
+      };
+      
+      
+		$preferensi = array();
+		$panjang_data =count($data);
+
+		$data1;
+		for ($i = 0; $i < $panjang_data; $i++) 
+		{
+			if ($i < count($data) - 1) {
+				$start = $i;
+				$next = $i + 1;
+				$jumlah_loop = $panjang_data - 1 - $i;
+
+		$pref_row = array();
+		for ($p = 0; $p < $next; $p++) 
+		{
+			array_push($pref_row, 0);
+		}
+		
+		for ($j = 0; $j < $jumlah_loop; $j++) 
+		{
+			$data1 = $data[$i];
+			$data2 = $data[$next + $j];
+		
+		//menghitung nilai preferensi (tipe preferensi 1 (usual)
+		$total = 0;
+		$t = 0;
+		for ($k = 0; $k < count($data[$i]); $k++) 
+		{
+			$perbandingan = ($data1[$k] - $data2[$k]);
+			if ($perbandingan <= 0) 
+			{
+				$t = 0;
+			} elseif ($perbandingan > 0) 
+			{
+				$t = 1;
+			}
+			$total = $total + $t;
+		}
+		
+		$rata_rata = $total / count($data1);
+		array_push($pref_row, $rata_rata);
+		}
+		
+		//logika perbandingan data2 - data1
+		for ($j = 0; $j < $jumlah_loop; $j++) 
+		{
+			$data1 = $data[$i];
+			$data2 = $data[$next + $j];
+		
+		//menghitung nilai preferensi (tipe preferensi 1 (usual)
+		$total = 0;
+		$t = 0;
+		for ($k = 0; $k < count($data[$i]); $k++) 
+		{
+			$perbandingan = ($data2[$k] - $data1[$k]);
+			if ($perbandingan <= 0) 
+			{
+				$t = 0;
+			} elseif ($perbandingan > 0) 
+			{
+				$t = 1;
+			}
+			$total = $total + $t;
+		}
+		
+		$rata_rata = $total / count($data1);
+		array_push($pref_row, $rata_rata);
+		}
+	
+		for ($row = 0; $row < count($pref_row); $row++) {}
+			array_push($preferensi, $pref_row);
+		}
+		}
+		
+		$zero_array = array(); for($xc = 0;$xc < $panjang_data; $xc++){ array_push($zero_array,0); }
+		array_push($preferensi, $zero_array);
+		
+		$preferensi2 = &$preferensi;
+		for ($row = 0; $row < count($preferensi); $row++) {
+		for ($col = 0; $col < count($preferensi[$row]); $col++) {
+		$preferensi2[$row][$col] = $preferensi[$row][$col];
+		$preferensi2[$row][$col] = $preferensi[$row][$col];
+		}
+		}
+		
+
+		//echo"<a href='perhitungan_saw.php' target=penampung><button>LIHAT PERHITUNGAN SAW</button></a> <br>"; 
+		//echo "<a href='perhitungan_saw.php' target=penampung>Lihat Perhitungan SAW </a>";
+		//$i=0;
+		
+		echo"
+			<style type=text/css>
+				td.z{color : #000000; background: #90EE90;}
+				td.a{color : #000000; background: #90EE90;}
+				tr.x:hover, .y:hover{background: #90EE90;}
+				tr.x {background: #FFFFFF;}
+				tr.y {background: #BFBFBF;}
+				table{font-family : arial; font-size : 14px; border-collapse : collapse;}
+				div.s{color: #000000; font-size : 20px; font-family : arial;}
+				form{margin-top : 0%;}
+		</style> ";
+				
+		echo "<table border=1px>";
+		$sql="SELECT id_namatanaman FROM nilai_kriteria ORDER BY id_namatanaman";
+		$result=$kon->query($sql);
+		$id_namatanaman=array();
+		$dataa=array();
+		while($row=$result->fetch_assoc()){
+		$dataa[]=$row;
+		$id_namatanaman[]=$row['id_namatanaman'];
+		}
+		$id_namatanaman=array_unique($id_namatanaman);
+		
+		echo"<br>";
+		echo "<h2>Hasil Data Indexs Preferensi Nilai</h2>";
+		echo "<table class=center border=1px>
+			<tr class bgcolor=#90EE90>
+			<td>Altertatif</td>";
+		foreach($id_namatanaman as $c)
+		echo "<td>$c</td>";
+		for ($col = 0; $col < count($preferensi2); $col++) {
+		echo "<tr>";
+		echo"<td class bgcolor=#90EE90>A$no</td>";
+		for ($row = 0; $row < count($preferensi2[$col]); $row++) {
+		echo "<td>" .$preferensi2[$col][$row]."</td>";
+		
+		}
+		$no++;
+		echo "<tr>";
+		}
+		
+		echo "</table>";
+		// Akhir Tabel
+		// Penomoran :
+		$no1=0;
+		$no2=0;
+		
+		//Leaving Flow
+		
+		echo "<h2>Hasil Perangkingan Leaving Flow</h2>";
+		echo "<table class=center border=1px>";
+		echo"<tr class=center bgcolor=#90EE90>
+			<td>Alternatif</td>
+			<td>Leaving Flow</td>
+			<td>Rangking</td>
+			</tr>";
+		for ($row = 0; $row < count($preferensi2); $row++) {
+		$no1++;
+		echo "<tr>";
+		echo"<td>A$no1</td>";
+		$total = 0;
+		for ($col = 0; $col < count($preferensi2[$row]); $col++) {
+		$total = $total + $preferensi2[$row][$col];
+		}
+		echo "<td width=100px>" .$total. "</td>";
+		echo"<td>$no1</td>";
+		}
+		echo "<tr>";
+		echo "</table>";
+		
+		//Entering Flow
+		echo "<tr bgcolor='#90EE90'>";
+		echo "<h2>Hasil Perangkingan Entering Flow </h2>";
+		echo "<table class=center border=1px>";
+		echo"<tr class=center bgcolor=#90EE90>
+			<td>Alternatif</td>
+			<td>Entering Flow</td>
+			<td>Rangking</td>
+			</tr>";
+		for ($col = 0; $col < count($preferensi2); $col++) {
+		$no2++;
+		echo "<tr>";
+		echo"<td>A$no2</td>";
+		$total = 0;
+		for ($row = 0; $row < count($preferensi2[$col]); $row++) {
+		$total = $total + $preferensi2[$col][$row];
+		}
+		echo "<td width=100px>" .$total. "</td>";
+		echo"<td>$no2</td>";
+		}
+		echo "<tr>";
+		echo "</table>";
+
+
+	// Akhir Tabel Entering Flow
+		
+	echo "<tr class=print bgcolor='#90EE90'>";
+	echo "<h2>Hasil Perangkingan Net Flow </h2>";
+	echo "<table class=center border=1px>";
+	echo"<tr class=center bgcolor=#90EE90>
+		<td>Alternatif</td>
+		<td>Net Flow</td>
+		<td>Rangking</td>
+		</tr>";
+	for ($row = 0; $row < count($preferensi2); $row++) {
+	$no3++;
+	echo "<tr>";
+	echo"<td>A$no3</td>";
+	$total = 0;
+	$total2 = 0;
+	for ($col = 0; $col < count($preferensi2[$row]); $col++) {
+	$total = $total + $preferensi[$row][$col];
+	$total2 = $total2 + $preferensi2[$row][$col];
+	}
+	$hsl=$total - ($total) . "<br/> ";
+	rsort($hsl);
+	$arrlength=count($hsl);
+	for($x=0;$x<$arrlength;$x++)
+	{
+	echo"<td>$hsl</td>";
+	}
+	echo"<td>$no3</td>";
+	}
+	$no++;
+	echo "<tr>";
+	echo"<tr><td onclick='myFunction()'>Print</td></tr>";
+	echo "</table>"; 
+  }
+}
+  ?>
+    </table>
+  </p>
+</body>
+</html>
+
